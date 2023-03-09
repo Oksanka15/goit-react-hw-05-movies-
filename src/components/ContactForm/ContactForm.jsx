@@ -2,48 +2,60 @@ import { useState } from 'react';
 
 import { Form, InputName, Input, AddContact } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux/es/exports';
-import { addContact } from 'components/redux/contactSlice';
+
 import { getContacts } from 'components/redux/selectors';
+import { addContacts } from 'components/redux/operations';
 
 
-const ContactForm = () => {
+
+export default function ContactForm() {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setNumber] = useState('');
 
-  const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
+  const allContacts = useSelector(getContacts);
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    if (contacts.some(e => e.name === name)) {
-      alert(`${name} is already in contacts`);
-    } else {
-      dispatch(addContact(name, number));
-    }
-    setName('');
-    setNumber('');
-  };
-
-  const handleChange = evt => {
-    const { name, value } = evt.target;
-    switch (name) {
+  function handelInputChange(event) {
+    switch (event.currentTarget.name) {
       case 'name':
-        setName(value);
+        setName(event.currentTarget.value);
         break;
-      case 'number':
-        setNumber(value);
+      case 'phone':
+        setNumber(event.currentTarget.value);
         break;
       default:
         return;
     }
-  };
+  }
+
+  function reset() {
+    setName('');
+    setNumber('');
+  }
+
+  function handelSubmit(event) {
+    event.preventDefault();
+
+    const contactName = [];
+
+    for (const contact of allContacts) {
+      contactName.push(contact.name);
+    }
+
+    if (contactName.includes(name)) {
+      alert(`${name} is already in contacts`);
+      return;
+    }
+    dispatch(addContacts({ name, phone }));
+    reset();
+  }
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handelSubmit}>
       <InputName>Name</InputName>
       <Input
         type="text"
         value={name}
-        onChange={handleChange}
+        onChange={handelInputChange}
         name="name"
         pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
         title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
@@ -52,9 +64,9 @@ const ContactForm = () => {
       <InputName>Number</InputName>
       <Input
         type="tel"
-        value={number}
-        onChange={handleChange}
-        name="number"
+        value={phone}
+        onChange={handelInputChange}
+        name="phone"
         pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
         title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
         required
@@ -64,5 +76,4 @@ const ContactForm = () => {
   );
 };
 
-export default ContactForm;
 

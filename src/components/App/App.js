@@ -1,6 +1,8 @@
 
+//import {ContactForm} from "components/ContactForm/ContactForm";
 import ContactForm from "components/ContactForm/ContactForm";
-import ContactList from "components/ContactList/ContactList";
+import { ContactsList } from "components/ContactList";
+//import {ContactList} from "components/ContactList/ContactList";
 import Filter from "components/Filter/Filter";
 import Section from "components/Section/Section";
 
@@ -13,7 +15,7 @@ export const App = () => {
         </Section>
         <Section title="Contacts">
           <Filter />
-          <ContactList />
+          <ContactsList />
         </Section>
       </>
     );
